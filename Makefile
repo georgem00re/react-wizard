@@ -16,3 +16,5 @@ backend-install-dependencies:
 
 backend-start:
 	NVM_DIR="$${HOME}/.nvm" && . "$${NVM_DIR}/nvm.sh" && cd nodejs-backend && nvm use && npm start
+
+install-all-dependencies: frontend-install-dependencies backend-install-dependencies
