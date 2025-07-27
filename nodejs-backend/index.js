@@ -3,6 +3,9 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const ejs = require("ejs");
+const cors = require("cors");
+
+app.use(cors());
 
 app.get("/health", (req, res) => {
     res.status(200).json({ status: "ok" });
