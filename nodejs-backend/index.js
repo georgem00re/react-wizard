@@ -13,6 +13,11 @@ app.get("/health", (req, res) => {
 })
 
 app.get("/download", async (req, res) => {
+    const {
+        projectName = "my-react-app",
+        nodeVersion = 18
+    } = req.query
+
     const indexHtmlTemplatePath = path.join(__dirname, "templates", "index.html.ejs");
     const packageJsonTemplatePath = path.join(__dirname, "templates", "package.json.ejs");
     const appTsxTemplatePath = path.join(__dirname, "templates", "App.tsx.ejs");
@@ -22,7 +27,7 @@ app.get("/download", async (req, res) => {
 
     try {
         res.setHeader("Content-Type", "application/zip")
-        res.setHeader("Content-Disposition", 'attachment; filename="rendered_files.zip"');
+        res.setHeader("Content-Disposition", `attachment; filename="${projectName}.zip"`);
 
         const archive = archiver("zip", { zlib: { level: 9 } });
         archive.pipe(res);
@@ -30,7 +35,7 @@ app.get("/download", async (req, res) => {
         const html = await ejs.renderFile(indexHtmlTemplatePath, {})
         archive.append(html, { name: "index.html" })
 
-        const packageJson = await ejs.renderFile(packageJsonTemplatePath, {})
+        const packageJson = await ejs.renderFile(packageJsonTemplatePath, { projectName })
         archive.append(packageJson, { name: "package.json" })
 
         const appTsx = await ejs.renderFile(appTsxTemplatePath, {})
@@ -42,7 +47,7 @@ app.get("/download", async (req, res) => {
         const mainTsx = await ejs.renderFile(mainTsxTemplatePath, {})
         archive.append(mainTsx, { name: "src/main.tsx" })
 
-        const nvmrc = await ejs.renderFile(nvmrcTemplatePath, {})
+        const nvmrc = await ejs.renderFile(nvmrcTemplatePath, { nodeVersion })
         archive.append(nvmrc, { name: ".nvmrc" })
 
         await archive.finalize()
