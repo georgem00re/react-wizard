@@ -14,6 +14,11 @@ app.get("/health", (req, res) => {
 
 app.get("/download", async (req, res) => {
     const indexHtmlTemplatePath = path.join(__dirname, "templates", "index.html.ejs");
+    const packageJsonTemplatePath = path.join(__dirname, "templates", "package.json.ejs");
+    const appTsxTemplatePath = path.join(__dirname, "templates", "App.tsx.ejs");
+    const indexCssTemplatePath = path.join(__dirname, "templates", "index.css.ejs");
+    const mainTsxTemplatePath = path.join(__dirname, "templates", "main.tsx.ejs");
+    const nvmrcTemplatePath = path.join(__dirname, "templates", '.nvmrc.ejs')
 
     try {
         res.setHeader("Content-Type", "application/zip")
@@ -24,6 +29,21 @@ app.get("/download", async (req, res) => {
 
         const html = await ejs.renderFile(indexHtmlTemplatePath, {})
         archive.append(html, { name: "index.html" })
+
+        const packageJson = await ejs.renderFile(packageJsonTemplatePath, {})
+        archive.append(packageJson, { name: "package.json" })
+
+        const appTsx = await ejs.renderFile(appTsxTemplatePath, {})
+        archive.append(appTsx, { name: "src/App.tsx" })
+
+        const indexCss = await ejs.renderFile(indexCssTemplatePath, {})
+        archive.append(indexCss, { name: "src/index.css" })
+
+        const mainTsx = await ejs.renderFile(mainTsxTemplatePath, {})
+        archive.append(mainTsx, { name: "src/main.tsx" })
+
+        const nvmrc = await ejs.renderFile(nvmrcTemplatePath, {})
+        archive.append(nvmrc, { name: ".nvmrc" })
 
         await archive.finalize()
     } catch (err) {
