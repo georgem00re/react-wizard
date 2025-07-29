@@ -13,10 +13,22 @@ app.get("/health", (req, res) => {
 })
 
 app.get("/download", async (req, res) => {
-    const {
-        projectName = "my-react-app",
-        nodeVersion = 18
-    } = req.query
+    const { projectName, nodeVersion } = req.query
+
+    if (!projectName || !nodeVersion) {
+        return res.status(400).json({
+            error: "Missing required query parameters"
+        })
+    }
+
+    const isValidProjectName = typeof projectName === "string" && projectName.trim().length > 0;
+    const isValidNodeVersion = typeof nodeVersion === "string" && !isNaN(Number(nodeVersion));
+
+    if (!isValidProjectName || !isValidNodeVersion) {
+        return res.status(400).json({
+            error: "Invalid query parameters"
+        });
+    }
 
     const indexHtmlTemplatePath = path.join(__dirname, "templates", "index.html.ejs");
     const packageJsonTemplatePath = path.join(__dirname, "templates", "package.json.ejs");
