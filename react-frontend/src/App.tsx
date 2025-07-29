@@ -7,13 +7,18 @@ import {FormInput } from "./components/TextInput.tsx";
 import {DownloadButton} from "./components/DownloadButton.tsx";
 import {FormHeader} from "./components/FormHeader.tsx";
 
+type FormValues = {
+    projectName: string;
+    projectVersion: number;
+}
+
 function App(): React.JSX.Element {
-    const { register, handleSubmit, formState: { errors } } = useForm({
+    const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
         mode: "onChange"
     });
     const hasFormErrors = Object.keys(errors).length > 0;
 
-    const onSubmit = async (formData: any) => {
+    const onSubmit = async (formData: FormValues) => {
         const { projectName, projectVersion } = formData
         const response = await dataService.getFileDownload(projectName, projectVersion)
 
