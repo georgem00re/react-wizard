@@ -13,9 +13,9 @@ app.get("/health", (req, res) => {
 })
 
 app.get("/download", async (req, res) => {
-    const { projectName, nodeVersion } = req.query
+    const { projectName, nodeVersion, typescript } = req.query
 
-    if (!projectName || !nodeVersion) {
+    if (!projectName || !nodeVersion || !typescript) {
         return res.status(400).json({
             error: "Missing required query parameters"
         })
@@ -23,8 +23,9 @@ app.get("/download", async (req, res) => {
 
     const isValidProjectName = typeof projectName === "string" && projectName.trim().length > 0;
     const isValidNodeVersion = typeof nodeVersion === "string" && !isNaN(Number(nodeVersion));
+    const isValidTypescript = typescript === "true" || typescript === "false";
 
-    if (!isValidProjectName || !isValidNodeVersion) {
+    if (!isValidProjectName || !isValidNodeVersion || !isValidTypescript) {
         return res.status(400).json({
             error: "Invalid query parameters"
         });
@@ -36,6 +37,8 @@ app.get("/download", async (req, res) => {
     const indexCssTemplatePath = path.join(__dirname, "templates", "index.css.ejs");
     const mainTsxTemplatePath = path.join(__dirname, "templates", "main.tsx.ejs");
     const nvmrcTemplatePath = path.join(__dirname, "templates", '.nvmrc.ejs')
+    const tsconfigTemplatePath = path.join(__dirname, "templates", "tsconfig.json.ejs")
+    const jsxFileExtension = typescript === "true" ? "tsx" : "jsx";
 
     try {
         res.setHeader("Content-Type", "application/zip")
@@ -44,24 +47,28 @@ app.get("/download", async (req, res) => {
         const archive = archiver("zip", { zlib: { level: 9 } });
         archive.pipe(res);
 
-        const html = await ejs.renderFile(indexHtmlTemplatePath, {})
+        const html = await ejs.renderFile(indexHtmlTemplatePath, { typescript })
         archive.append(html, { name: "index.html" })
 
-        const packageJson = await ejs.renderFile(packageJsonTemplatePath, { projectName })
+        const packageJson = await ejs.renderFile(packageJsonTemplatePath, { projectName, typescript })
         archive.append(packageJson, { name: "package.json" })
 
-        const appTsx = await ejs.renderFile(appTsxTemplatePath, {})
-        archive.append(appTsx, { name: "src/App.tsx" })
+        const appTsx = await ejs.renderFile(appTsxTemplatePath, { typescript })
+        archive.append(appTsx, { name: `src/App.${jsxFileExtension}` })
 
         const indexCss = await ejs.renderFile(indexCssTemplatePath, {})
         archive.append(indexCss, { name: "src/index.css" })
 
-        const mainTsx = await ejs.renderFile(mainTsxTemplatePath, {})
-        archive.append(mainTsx, { name: "src/main.tsx" })
+        const mainTsx = await ejs.renderFile(mainTsxTemplatePath, { typescript })
+        archive.append(mainTsx, { name: `src/main.${jsxFileExtension}` })
 
         const nvmrc = await ejs.renderFile(nvmrcTemplatePath, { nodeVersion })
         archive.append(nvmrc, { name: ".nvmrc" })
 
+        if (typescript === true || typescript === "true") {
+            const tsconfig = await ejs.renderFile(tsconfigTemplatePath, {});
+            archive.append(tsconfig, { name: "tsconfig.json" });
+        }
         await archive.finalize()
     } catch (err) {
         console.log(err)

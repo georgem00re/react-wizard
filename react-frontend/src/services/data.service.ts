@@ -40,9 +40,14 @@ const getRestApi = (): AxiosInstance => {
     });
 };
 
-const getFileDownload = async (projectName: string, nodeVersion: number) => {
+const getFileDownload = async (
+    projectName: string,
+    nodeVersion: number,
+    typescript: boolean,
+) => {
     try {
-        const response = await getRestApi().get(`/download?projectName=${projectName}&nodeVersion=${nodeVersion}`, {
+        const response = await getRestApi().get(
+            `/download?projectName=${projectName}&nodeVersion=${nodeVersion}&typescript=${typescript}`, {
             responseType: "blob",
         });
         const objectUrl: string = window.URL.createObjectURL(

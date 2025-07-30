@@ -22,7 +22,7 @@ export const FormInput = ({ register, errors, label, required, id, type, default
         "appearance-none border-1 rounded w-full py-2 px-4 text-gray-700 text-sm leading-tight focus:outline-none focus:bg-white",
         {
             "border-red-500 focus:border-red-500": hasError,
-            "border-gray-200 focus:border-purple-500": !hasError
+            "border-gray-200 focus:border-blue-600": !hasError
         }
     );
 

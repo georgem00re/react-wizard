@@ -1,15 +1,17 @@
 import React from "react";
 import "./index.css"
 import {dataService} from "./services/data.service.ts";
-import {enqueueSnackbar} from "notistack";
+import {useSnackbar} from "notistack";
 import { useForm } from "react-hook-form";
 import {FormInput } from "./components/TextInput.tsx";
 import {DownloadButton} from "./components/DownloadButton.tsx";
 import {FormHeader} from "./components/FormHeader.tsx";
+import {CheckboxButton} from "./components/CheckboxButton.tsx";
 
 type FormValues = {
     projectName: string;
-    projectVersion: number;
+    nodeVersion: number;
+    typescript: boolean;
 }
 
 function App(): React.JSX.Element {
@@ -17,10 +19,11 @@ function App(): React.JSX.Element {
         mode: "onChange"
     });
     const hasFormErrors = Object.keys(errors).length > 0;
+    const { enqueueSnackbar } = useSnackbar()
 
     const onSubmit = async (formData: FormValues) => {
-        const { projectName, projectVersion } = formData
-        const response = await dataService.getFileDownload(projectName, projectVersion)
+        const { projectName, nodeVersion, typescript } = formData
+        const response = await dataService.getFileDownload(projectName, nodeVersion, typescript)
 
         if (response.data?.objectUrl) {
             const { objectUrl } = response.data;
@@ -43,7 +46,7 @@ function App(): React.JSX.Element {
                     errors={errors}
                     label="Project Name"
                     required={true}
-                    id="ProjectName"
+                    id="projectName"
                     type="text"
                     defaultValue={"my-react-application"}
                 />
@@ -52,10 +55,11 @@ function App(): React.JSX.Element {
                     errors={errors}
                     label="Node.js Version"
                     required={true}
-                    id="NodeVersion"
+                    id="nodeVersion"
                     type="number"
                     defaultValue={18}
                 />
+                <CheckboxButton register={register} label={"Typescript"} id={"typescript"}/>
                 <DownloadButton handleSubmit={handleSubmit(onSubmit)} disabled={hasFormErrors}/>
             </form>
         </div>

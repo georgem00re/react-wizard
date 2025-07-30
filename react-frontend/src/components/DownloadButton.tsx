@@ -13,7 +13,7 @@ interface DownloadButtonProps {
 export const DownloadButton = ({ handleSubmit, disabled }: DownloadButtonProps) => {
 
     const buttonClasses = classNames(
-        "bg-purple-500 p-3 text-white rounded-lg w-full uppercase mt-1",
+        "bg-blue-600 p-3 text-white rounded-lg w-full uppercase mt-5",
         {
             "cursor-not-allowed opacity-50": disabled,
             "cursor-pointer hover:bg-purpose-800": !disabled
