@@ -7,6 +7,7 @@ import {FormInput } from "./components/TextInput.tsx";
 import {DownloadButton} from "./components/DownloadButton.tsx";
 import {FormHeader} from "./components/FormHeader.tsx";
 import {CheckboxButton} from "./components/CheckboxButton.tsx";
+import {NavigationMenu} from "./components/NavigationMenu.tsx";
 
 type FormValues = {
     projectName: string;
@@ -41,6 +42,7 @@ function App(): React.JSX.Element {
         <div className="flex justify-center w-full min-h-screen p-4">
             <form className="w-full max-w-xl">
                 <FormHeader/>
+                <NavigationMenu/>
                 <FormInput
                     register={register}
                     errors={errors}

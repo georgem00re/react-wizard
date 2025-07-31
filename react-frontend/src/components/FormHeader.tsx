@@ -6,7 +6,7 @@ export const FormHeader = () => {
     return (
         <div className="flex items-center space-x-2 border-b py-3 border-gray-200">
             <FontAwesomeIcon icon={faHatWizard} size="2x"/>
-            <h1 className="text-xl">George's React Wizard</h1>
+            <h1 className="text-xl text-gray-700">George's React Wizard</h1>
         </div>
     )
 }
